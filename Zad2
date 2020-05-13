@@ -1,4 +1,4 @@
-mov 30h, #11000000b
+mov 30h, #11000000b ;definiowanie wyswietlania sie poszczegolnych segmentow
 mov 31h, #11111001b
 mov 32h, #10100100b
 mov 33h, #10110000b
@@ -9,33 +9,32 @@ mov 37h, #11111000b
 mov 38h, #10000000b
 mov 39h, #10010000b
 mov 3ah, #0
-clr p3.4
-clr p3.3
+
  start:
-mov r0, #30h
+mov r0, #30h ;poczatkowa deklaracja wartosci rejestru r0
 
  loop:
+setb p3.4 ;ustawienie lewego wyswietlacza
+setb p3.3
+mov a, @r0 ;bezposrednie przekazanie wartosci do akumulatora z rejestru
+jz start 
+mov p1, a ;przypisanie wartosci portowi 1
+inc r0 ;inkrementacja rejestru 0 
+acall delay ;wywolanie opoznienia
+clr p3.3 ;ustawienie drugiego wyswietlacza
+mov a, @r0
+jz start
+mov p1, a
+inc r0
+acall delay
+setb p3.3 ;ustawienie trzeciego wyswietlacza
 clr p3.4
-clr p3.3
 mov a, @r0
 jz start
 mov p1, a
 inc r0
 acall delay
-setB p3.3
-mov a, @r0
-jz start
-mov p1, a
-inc r0
-acall delay
-clr p3.3
-setB p3.4
-mov a, @r0
-jz start
-mov p1, a
-inc r0
-acall delay
-setB p3.3
+clr p3.3 ;ustawienie czwartego wyswietlacza
 mov a, @r0
 jz start
 mov p1, a
@@ -44,6 +43,6 @@ jmp loop
 
 
 delay: ;opoznienie 4us
-	MOV R1, #10
-	DJNZ R1, $
-	RET
+	MOV R1, #10 ;przypisanie wartosci 10 rejestrowi R1
+	DJNZ R1, $ ;dekrementacja wartosci rejestru R1
+	RET ;zwrocenie funkcji
