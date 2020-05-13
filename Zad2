@@ -1,0 +1,49 @@
+mov 30h, #11000000b
+mov 31h, #11111001b
+mov 32h, #10100100b
+mov 33h, #10110000b
+mov 34h, #10011001b
+mov 35h, #10010010b
+mov 36h, #10000010b
+mov 37h, #11111000b
+mov 38h, #10000000b
+mov 39h, #10010000b
+mov 3ah, #0
+clr p3.4
+clr p3.3
+ start:
+mov r0, #30h
+
+ loop:
+clr p3.4
+clr p3.3
+mov a, @r0
+jz start
+mov p1, a
+inc r0
+acall delay
+setB p3.3
+mov a, @r0
+jz start
+mov p1, a
+inc r0
+acall delay
+clr p3.3
+setB p3.4
+mov a, @r0
+jz start
+mov p1, a
+inc r0
+acall delay
+setB p3.3
+mov a, @r0
+jz start
+mov p1, a
+inc r0
+jmp loop
+
+
+delay: ;opoznienie 4us
+	MOV R1, #10
+	DJNZ R1, $
+	RET
