@@ -1,5 +1,6 @@
 start:
 MOV R0,#0 ;pierwszym klawiszem jest 0 
+setB P0.4 ;,,zerowanie'' column3
 clr P0.6 ; ustawienie column1
 call rowScan ;wywolanie podprogramu skanujacego wiersz
 JB F0, delay ;jezeli f0 ustawiona, skocz na koniec programu
