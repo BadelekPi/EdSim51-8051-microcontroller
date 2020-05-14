@@ -55,10 +55,10 @@ INC R0
 INC R0 ; w przeciwnym razie pójdzie do następnego klawisza
 RET ; powrót z podprogramu – klawisz nie znaleziony
 gotKey:
-MOV A, R0
-JZ D1
-DEC A
-JZ D2
+MOV A, R0 ;podanie do akumulatora wartosci z rejestru R0
+JZ D1 ;skok warunkowy jezeli wartosc jest rowna 0
+DEC A ;dekrementacja wartosci przypisanej akumulatorowi
+JZ D2 ;skok warunkowy jezeli po kolejnym dekrementowaniu wartosc jest wyzerowana 
 DEC A
 JZ D3
 DEC A
