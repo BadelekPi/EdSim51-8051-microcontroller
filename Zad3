@@ -1,0 +1,87 @@
+start:
+MOV R0,#0 ;pierwszym klawiszem jest 0 
+clr P0.6 ; ustawienie column1
+call rowScan ;wywolanie podprogramu skanujacego wiersz
+JB F0, delay ;jezeli f0 ustawiona, skocz na koniec programu
+
+setB P0.6 ;zerowanie column1
+clr P0.5 ; ustawienie column2
+call rowScan ;wywolanie podprogramu skanujacego wiersz
+JB F0, delay ;jezeli f0 ustawiona, skocz na koniec program
+
+setB P0.5 ;zerowanie column2
+clr P0.4 ; ustawienie column3
+call rowScan ;wywolanie podprogramu skanujacego wiersz
+JB F0, delay ;jezeli f0 ustawiona, skocz na koniec program
+
+JMP start
+
+
+delay:
+JMP $
+
+rowScan:
+JNB P0.3, gotKey
+INC R0
+JNB P0.2, gotKey
+INC R0
+JNB P0.1, gotKey
+INC R0
+JNB P0.0, gotKey
+INC R0
+ret
+
+gotKey:
+MOV A,R0
+JZ S0
+DEC A
+JZ S1
+DEC A
+JZ S2
+DEC A
+JZ S3
+DEC A
+JZ S4
+DEC A
+JZ S5
+DEC A
+JZ S6
+DEC A
+JZ S7
+DEC A
+JZ S8
+DEC A
+JZ S9
+Setb F0
+RET
+
+S0: ;wyswietlanie zera
+MOV P1, #11000000b
+JMP delay
+S1: ;wyswietlanie jedynki
+MOV P1, #11111001b
+JMP delay
+S2: ;wyswietlanie dwojki
+MOV P1, #10100100b
+JMP delay
+S3: ;wyswietlanie trojki
+MOV P1, #10110000b
+JMP delay
+S4: ;wyswietlenie czworki
+MOV P1, #10011001b
+JMP delay
+S5: ;wyswietlenie piatki
+MOV P1, #10010010b
+JMP delay
+S6: ;wyswietlenie szostki
+MOV P1, #10000010b
+JMP delay
+S7: ;wyswietlenie siodemki
+MOV P1, #11111000b
+JMP delay
+S8: ;wyswietlenie ósemki
+MOV P1, #10000000b
+JMP delay
+S9: ;wyswietlenie dziewiątki
+MOV P1, #10010000b
+JMP delay
