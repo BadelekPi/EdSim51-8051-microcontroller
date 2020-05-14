@@ -1,0 +1,80 @@
+dioda1 equ P1.0 ; przypisanie nazwie dioda 1 pinu 0 portu 1
+dioda2 equ P1.1
+dioda3 equ P1.2
+dioda4 equ P1.3
+dioda5 equ P1.4
+dioda6 equ P1.5
+dioda7 equ P1.6
+dioda8 equ p1.7
+mov p1,#0ffh ;ustawienie 1 na wszystkich pinach P1 - wygaszenie diod
+start:
+MOV R0, #0 ; zerowanie R0 - pierwszym klawiszem jest klawisz 0
+; scan row0
+SETB P0.3 ; ustawienie row3
+CLR P0.0 ; zerowanie row 0
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0,delay ; jeżeli F0 jest 1, skocz na koniec tego programu
+; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0
+; scan row1
+SETB P0.0 ; ustawienie row0
+CLR P0.1 ; zerowanie row1
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0, delay ; jeżeli F0 jest 1, skocz na koniec tego programu
+; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0)
+; scan row2
+SETB P0.1 ; ustawienie row1
+CLR P0.2 ; zerowanie row2
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0,delay ; jeżeli F0 jest 1, skocz na koniec tego programu
+; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0)
+; scan row3
+SETB P0.2 ; ustawienie row2
+CLR P0.3 ; czyszczenie row3
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0, delay ; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0)
+JMP start ; powrót do skanowania row 0
+ ; (to dlatego wiersz 3 jest ustawiony na początku programu – gdy
+ ; program wraca do początku, wiersz 3 właśnie został zeska-
+ ;nowany)
+delay:
+SETB P3.1 ;wylaczenie silnika
+JMP $ ;Realizacja programu dociera do tego miejsca, gdy znajduje się
+ ; klawisz – nic nie rób
+
+; podprogram skanowania kolumny
+colScan:
+JNB P0.4, gotKey ; jeżeli col 0 wyczyszczona – klawisz znaleziony
+INC R0 ; w przeciwnym razie pójdzie do następnego klawisza
+JNB P0.5, gotKey ; jeżeli col 1 jest wyczyszczona (0) – klawisz znaleziony
+INC R0
+ JNB P0.6, gotKey ; jeżeli col 2 jest wyczyszczona (0) – klawisz znaleziony 
+INC R0 ; w przeciwnym razie pójdzie do następnego klawisza
+RET ; powrót z podprogramu – klawisz nie znaleziony
+gotKey:
+
+MOV A, R0 ;podanie do akumulatora wartosci z rejestru R0
+JMP motor_left ;skok do podprogramu obracania silnikiem
+SETB F0 ; klawisz znaleziony – ustaw F0
+RET ; i powróć z podprogramu 
+
+motor_left: 
+CLR P3.0 ;ustawienie obracania sie silnika przeciwnie do wskazowek zegara
+dec A ;dekrementacja wartosci akumulatora 
+JZ ustawienie ;skok warunkowy jezeli wartosc akumulatora rowna 0
+JNZ motor_left ;jezeli wartosc akumulatora nie rowna 0, przejdz na poczatek podprogramu
+
+motor_right: 
+
+SETB P3.0 ;zatrzymanie obracania silnikiem przeciwnie do wskazowek zegara
+CLR P3.1 ;ustawienie obracania sie silnika zgodnie ze wskazowkami zegara
+dec A ;dekrementacja wartosci akumulatora
+JZ delay ;skok do podprogramu
+JNZ motor_right ;jezeli wartosc akumulatora nie rowna 0, przejdz na poczatek podprogramu
+
+ustawienie: ;podprogram przypisujacy ponownie wartosc rejestru R0 akumulatorowi
+MOV A, R0
+JMP motor_right ;skok do podprogramu obracania silnikiem
