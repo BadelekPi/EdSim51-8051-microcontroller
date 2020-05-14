@@ -1,0 +1,100 @@
+
+dioda1 equ P1.0 ; przypisanie nazwie dioda 1 pinu 0 portu 1
+dioda2 equ P1.1
+dioda3 equ P1.2
+dioda4 equ P1.3
+dioda5 equ P1.4
+dioda6 equ P1.5
+dioda7 equ P1.6
+dioda8 equ p1.7
+mov p1,#0ffh ;ustawienie 1 na wszystkich pinach P1 - wygaszenie diod
+start:
+MOV R0, #0 ; zerowanie R0 - pierwszym klawiszem jest klawisz 0
+; scan row0
+SETB P0.3 ; ustawienie row3
+CLR P0.0 ; zerowanie row 0
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0,delay ; jeżeli F0 jest 1, skocz na koniec tego programu
+; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0
+; scan row1
+SETB P0.0 ; ustawienie row0
+CLR P0.1 ; zerowanie row1
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0, delay ; jeżeli F0 jest 1, skocz na koniec tego programu
+; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0)
+; scan row2
+SETB P0.1 ; ustawienie row1
+CLR P0.2 ; zerowanie row2
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0,delay ; jeżeli F0 jest 1, skocz na koniec tego programu
+; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0)
+; scan row3
+SETB P0.2 ; ustawienie row2
+CLR P0.3 ; czyszczenie row3
+CALL colScan ; wywołanie podprogramu skanującego kolumnę
+JB F0, delay ; (ponieważ naciśnięty klawisz został znaleziony jego numer
+ ; zapisuje się do R0)
+JMP start ; powrót do skanowania row 0
+ ; (to dlatego wiersz 3 jest ustawiony na początku programu – gdy
+ ; program wraca do początku, wiersz 3 właśnie został zeska-
+ ;nowany)
+delay:
+JMP $ ;Realizacja programu dociera do tego miejsca, gdy znajduje się
+ ; klawisz – nic nie rób
+
+; podprogram skanowania kolumny
+colScan:
+JNB P0.4, gotKey ; jeżeli col 0 wyczyszczona – klawisz znaleziony
+INC R0 ; w przeciwnym razie pójdzie do następnego klawisza
+JNB P0.5, gotKey ; jeżeli col 1 jest wyczyszczona (0) – klawisz znaleziony
+INC R0
+ JNB P0.6, gotKey ; jeżeli col 2 jest wyczyszczona (0) – klawisz znaleziony 
+INC R0 ; w przeciwnym razie pójdzie do następnego klawisza
+RET ; powrót z podprogramu – klawisz nie znaleziony
+gotKey:
+MOV A, R0
+JZ D1
+DEC A
+JZ D2
+DEC A
+JZ D3
+DEC A
+JZ D4
+DEC A
+JZ D5
+DEC A
+JZ D6
+DEC A
+JZ D7
+DEC A
+JZ D8
+SETB F0 ; klawisz znaleziony – ustaw F0
+RET ; i powróć z podprogramu 
+
+D1: ;zapalenie diody1
+CLR dioda1
+JMP delay
+D2: ;zapalenie diody2
+CLR dioda2
+JMP delay
+D3: ;zapalenie diody3
+CLR dioda3
+JMP delay
+D4: ;zapelenie diody4
+CLR dioda4
+JMP delay
+D5: ;zapelenie diody5
+CLR dioda5
+JMP delay
+D6: ;zapalenie diody6
+CLR dioda6
+JMP delay
+D7: ;zapalenie diody7
+CLR dioda7
+JMP delay
+D8: ;zapalenie diody8
+CLR dioda8
+JMP delay
