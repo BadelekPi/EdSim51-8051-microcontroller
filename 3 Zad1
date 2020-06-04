@@ -12,42 +12,27 @@ start:
 main:
 mov p1,#0ffh ;ustawienie 1 na wszystkich pinach P1 - wygaszenie diod
 cpl dioda1 ;włączenie 1 diody
-acall opoznienie1 ;wywolanie podprogramu opoznienia 
-;(dekrementacja zawartosci rejestru R1)
 cpl dioda2 ;włączenie 2 diody
-acall opoznienie2 ; wywolanie podprogramu opoznienia 
+acall opoznienie ; wywolanie podprogramu opoznienia 
 ;(inkrementacja wartosci rejestru R1)
 cpl dioda3 ;włączenie 3 diody
-acall opoznienie3 ;wywalanie podprogramu opoznienia
-;(dekrementacja wartosci akumulatora)
 cpl dioda4 ;włączenie 4 diody
-acall opoznienie1
+acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda5 ;włączenie 5 diody
-acall opoznienie2
+acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda6 ;włączenie 6 diody
-acall opoznienie3
+acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda7 ;włączenie 7 diody
-acall opoznienie1
+acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda8 ;włączenie 8 diody
 
-opoznienie1: 
-mov R1,#10 ;wstawienie do R1 wartości 10
-djnz R1,$ ;skok warunkowy zalezny od wyniku dekrementacji
-;jezeli zawartosc osiagnela zera, to nastepi skok ;obieg pętli trwa 2us,tyle zajmuje prgoramowi wykonanie podanych komend
-ret
 
-opoznienie2:
+opoznienie:
 mov R1,#-10 ;wstawienie do R1 wartosci 10
 skok1:
 inc R1 ;inkrementacja wartosci rejestru R1
 jnz skok1 ;deklaracja skoku warunkowego jezeli wartosc 
 ;rejestru jest rozna od zera
-ret
+ret ;zwróć
 
-opoznienie3:
-mov A,#10 ;wstawienie do A wartosci 10
-skok2:
-dec A ;dekrementacja akumulatora A
-jnz skok2 ;deklaracja skoku warunkowego jezeli wartosc 
-;akumulatora jest rozna od zera
-ret
+
