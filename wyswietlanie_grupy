@@ -1,0 +1,97 @@
+; wprowadzanie danych do RAM
+MOV 30H, #'W' ;wprowadzenie litery A pod adres 30H
+MOV 31H, #'M'
+MOV 32H, #'T'
+MOV 33H, #'1'
+MOV 34H, #'8'
+MOV 35H, #'A'
+MOV 36H, #'X’
+MOV 37H, #'1'
+MOV 38H, #'S'
+MOV 39H, #'1'
+MOV 40H, #0 ; koniec wprowadzania danych
+; Inicjalizacja wyświetlacza
+; zobacz szczegółowy zestaw instrukcji
+CLR P1.3 ; clear RS - ;wskazuje, że instrukcja została wysłana do modułu
+; ustawienie funkcji
+CLR P1.7 ; |
+CLR P1.6 ; |
+SETB P1.5 ; |
+CLR P1.4 ; |ustawienie wysokiej części bajta
+SETB P1.2 ; |
+CLR P1.2 ; |
+CALL delay ;wywołanie podprogramu delay
+; ustawienie funkcji do wysyłania po raz pierwszy - informuje ;moduł, że będzie pracował w rodzaju 4-bitowym
+;Dlaczego zestaw funkcji o wysokiej wartości jest wysyłany dwukrotnie? Zobacz operację 4-;bitową na stronach 39 i 42; HD44780.pdf.
+SETB P1.2 ; |
+CLR P1.2 ; | zbocze opadające na E
+; ta sama funkcja ustawia wysoką część bajtu do wysyłania po ;raz drugi
+SETB P1.7 ; ustawienie poziomu na P1.7 wymaga zmiany)
+; zestaw niskiego wybierania (tylko P1.7 musiała być zmieniona
+SETB P1.2 ; |
+CLR P1.2 ; |zbocze opadające na E
+; funkcja ustawia niski poziom do wysyłania
+CALL delay ; oczekiwania na BF w celu czyszczenia
+; zestaw trybów wprowadzania
+; zestaw do zwiększania bez przesuwania
+CLR P1.7 ; |
+CLR P1.6 ; |
+CLR P1.5 ; |
+CLR P1.4 ; | ustawienie wysokiego poziomu
+SETB P1.2 ; |
+CLR P1.2 ; |opadające zbocze na E
+SETB P1.6 ; |
+SETB P1.5 ; |ustawienie niskiego poziomu
+SETB P1.2 ; |
+CLR P1.2 ; |opadające zbocze na E
+CALL delay ; wywołanie podprogramu delay
+; sterowanie włączanie i wyłączaniem wyświetlacza
+CLR P1.7 ; |
+CLR P1.6 ; |
+CLR P1.5 ; |
+CLR P1.4 ; | ustawienie wysokiego poziomu
+SETB P1.2 ; |
+CLR P1.2 ; |
+SETB P1.7 ; |
+SETB P1.6 ; |
+SETB P1.5 ; |
+SETB P1.4 ; | ustawienie niskiego poziomu
+SETB P1.2 ; |
+CLR P1.2 ; | opadające zbocze na E
+CALL delay ; wywołanie podprogramu delay
+; wysyłanie danych
+SETB P1.3 ; clear RS - wskazuje, że dane są wysyłane do modułu ,
+MOV R1, #30H ; dana, która będzie wysłana do LCD jest zapisywana do RAM ; w rejestrze R1, zaczynając od lokacji 30H
+loop:
+MOV A, @R1 ; przesunięcie danej z pod adresu R1 do akumulatora A
+JZ finish ; Jeśli A jest równe 0, to wtedy koniec danych został osiągnięty - ;skok do pętli finish
+CALL sendCharacter ; wywołanie podprogramu wysyłania litery do modułu LCD
+INC R1 ; incrementacja R1 - przejście do następnej części danych JMP loop ; skok do loop
+finish:
+JMP loop ; pętla nieskończona
+sendCharacter: ; podprogram wysyłania litery
+MOV C, ACC.7 ;|wstawienie 7 bitu akumulatora do etykiety przeniesienia C
+MOV P1.7, C ; |Podanie na P1.7 wartości C (0 lub 1)
+MOV C, ACC.6 ; |wstawienie 6 bitu akumulatora do etykiety przeniesienia C
+MOV P1.6, C ; |Podanie na P1.6 wartości C (0 lub 1)
+MOV C, ACC.5 ; |wstawienie 5 bitu akumulatora do etykiety przeniesienia C
+MOV P1.5, C ; |Podanie na P1.5 wartości C (0 lub 1)
+MOV C, ACC.4 ; |wstawienie 4 bitu akumulatora do etykiety przeniesienia C
+MOV P1.4, C ; |Podanie na P1.5 wartości C (0 lub 1)
+SETB P1.2 ; |
+CLR P1.2 ; | opadające zbocze na E
+MOV C, ACC.3 ; |wstawienie 3 bitu akumulatora do etykiety przeniesienia C
+MOV P1.7, C ; |Podanie na P1.7 wartości C (0 lub 1)
+MOV C, ACC.2 ; |wstawienie 2 bitu akumulatora do etykiety przeniesienia C
+MOV P1.6, C ; |Podanie na P1.6 wartości C (0 lub 1)
+MOV C, ACC.1 ; |wstawienie 1 bitu akumulatora do etykiety przeniesienia C
+MOV P1.5, C ; |Podanie na P1.5 wartości C (0 lub 1)
+MOV C, ACC.0 ; |wstawienie 0 bitu akumulatora do etykiety przeniesienia C
+MOV P1.4, C ; |Podanie na P1.4 wartości C (0 lub 1) - ustawienie dolnej części ;bajtu
+SETB P1.2 ; |
+CLR P1.2 ; |opadające zbocze na E
+CALL delay ; wywołanie podprogramu delay
+delay:
+MOV R0, #50 ;wstawienie do rejestru R0 wartości 50
+DJNZ R0, $ ;dekrementacja tak długo aż R0 nie osiągnie wartość 0
+RET
