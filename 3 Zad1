@@ -12,10 +12,12 @@ start:
 main:
 mov p1,#0ffh ;ustawienie 1 na wszystkich pinach P1 - wygaszenie diod
 cpl dioda1 ;włączenie 1 diody
+acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda2 ;włączenie 2 diody
 acall opoznienie ; wywolanie podprogramu opoznienia 
 ;(inkrementacja wartosci rejestru R1)
 cpl dioda3 ;włączenie 3 diody
+acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda4 ;włączenie 4 diody
 acall opoznienie ; wywolanie podprogramu opoznienia 
 cpl dioda5 ;włączenie 5 diody
