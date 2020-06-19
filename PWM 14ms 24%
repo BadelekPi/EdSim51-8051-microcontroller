@@ -1,0 +1,23 @@
+ORG 0 ; wektor zerowania
+ JMP MAIN ; bezwarunkowo skocz poza obszar wektorów przerwań
+ORG 000BH ; wektor przerwania po przepełnieniu timer0
+ JMP PODPR
+MAIN:
+ MOV TMOD, #01H ; ustaw dla timer0 tryb 2
+ MOV TL0, #54896 ; ustaw TL0 na przepelnienie po czasie trwania stanu L
+ MOV TH0, #62176 ; ustaw TH0 na czas trwania stanu H
+ SETB EA ; globalnie zezwól na przerwania
+ SETB ET0 ; zezwól na przerwanie po przepełnieniu timer0
+ CLR P0.7 ; wlaczenie oscyloskopu stan L na wyjsciu
+ SETB TR0 ; uruchom TIMER0
+ JMP $ ; pętla pusta - czekaj na przerwania
+
+PODPR:
+ CPL P1.7 ; ustawiamy stan wyjscia na przeciwy niz byl
+ JB P1.7,PODPR_L; jesli stan wyjscia jest H to skok do zaladowania czasu trwania stanu L do
+;rejestru TH0
+ ; w przeciwnym wypadku
+ MOV TH0, #62176 ; zaladuj do TH0 na czas trwania stanu H
+ RETI ; powrót z przerwania ORG 0030H
+PODPR_L:
+ MOV TH0, #54896 ; ustaw TH0 na czas t
