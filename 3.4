@@ -1,0 +1,16 @@
+ORG 0   ; wektor zerowania 
+JMP main ; bezwarunkowo skocz poza obszar wektorów przerwań 
+ORG 000BH ; wektor przerwania po przepełnieniu timer0 
+CPL P1.7 ; zmień stan P1.7 (najstarszy bit) na przeciwny 
+MOV TH0,#0B1h       ; {10110001} 
+MOV TL0,#01Ch        ; {11100} 
+RETI ; powrót z przerwania ORG 0030H ; początek programu głównego 
+main: 
+CLR P0.7 ; wlaczenie oscyloskopu 
+MOV TMOD, #00H ; ustaw dla timer0 tryb 0 
+MOV TH0,#0B1h  ; {10110001}
+MOV TL0,#01Ch ;{11100} 
+SETB EA ; globalnie zezwól na przerwania 
+SETB ET0 ; zezwól na przerwanie po przepełnieniu timer0 
+SETB TR0 ; uruchom timer0 
+JMP $ ; pętla pusta - czekaj na przerwania 
