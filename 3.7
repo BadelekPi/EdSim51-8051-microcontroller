@@ -1,0 +1,12 @@
+MOV TMOD, #01100000b  ;ustawienie licznika T1 
+MOV TH1,  #-4     ;ustawienie TH1  
+MOV TL1, #-4      ;ustawienie TL1 
+SETB TR1            ;uruchom Timer1 
+SETB P3.1         ;włączenie silnika 
+CLR P3.0
+czekaj: 
+JNB TF1, czekaj   ;jeśli TF1 nieustawiona, skocz do etykiety 
+CLR TF1          ;skasuj flagę TF1 
+CPL P3.1         ; zmien stan P1.0 na przeciwny  CPL 
+CPL P3.0  
+JMP czekaj       ;bezwarunkowo skocz do etykiety 
